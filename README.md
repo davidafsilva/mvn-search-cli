@@ -10,7 +10,7 @@ CLI script for searching artifacts at maven central
 
 The I/O to perform a search for vertx would be something like this:
 ```
-→ mvn-search vertx                                                                                                              [8eb1da2]
+→ mvn-search vertx
 ┌────────────────────────────────────────────────────────────┐
 │        group id       │       artifact id        │ version │
 ├────────────────────────────────────────────────────────────┤
