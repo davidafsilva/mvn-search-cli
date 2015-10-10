@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import json
+import urllib
+import urllib2
+import sys
+
+def max_or(results,field,default):
+    m = max(len(r[field]) for r in results)
+    return m if m > default else default
+
+def parse_results(results,totalResultsCount):
+    # print "%d out of %d" % (len(results), totalResultsCount)
+    o_g = max_or(results,'g',8)
+    o_a = max_or(results,'a',11)
+    o_v = max_or(results,'latestVersion',7)
+    print '┌'+'─'*(o_g+o_a+o_v+8)+'┐'
+    print '│','group id'.center(o_g,' '),'│','artifact id'.center(o_a,' '),'│','version'.center(o_v,' '),'│'
+    print '├'+'─'*(o_g+o_a+o_v+8)+'┤'
+    for r in results: print '│',r['g'].rjust(o_g,' '),'│',r['a'].rjust(o_a, ' '),'│',r['latestVersion'].rjust(o_v, ' '),'│'
+    print '└'+'─'*(o_g+o_a+o_v+8)+'┘'
+
+def no_results():
+    print "no artifacts found"
+
+def search(args):
+    parameters = urllib.urlencode({'rows': 10, 'wt': 'json', 'q': args})
+    url = 'https://search.maven.org/solrsearch/select?%s' % parameters
+    try:
+        data = json.load(urllib2.urlopen(url))
+        response = data['response']
+        numResults = int(response['numFound'])
+        parse_results(response['docs'],numResults) if numResults > 0 else no_results()
+    except urllib2.HTTPError as e: print e
+
+if __name__ == "__main__":
+    search(sys.argv[1:])
