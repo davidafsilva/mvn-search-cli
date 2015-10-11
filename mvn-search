@@ -5,13 +5,16 @@ import json
 import urllib
 import urllib2
 import sys
+import argparse
 
 def max_or(results,field,default):
     m = max(len(r[field]) for r in results)
     return m if m > default else default
 
-def parse_results(results,totalResultsCount):
-    # print "%d out of %d" % (len(results), totalResultsCount)
+def print_results_formatted(results,o_format):
+    for r in results: print o_format % (r['g'],r['a'],r['latestVersion'])
+
+def print_results_table(results):
     o_g = max_or(results,'g',8)
     o_a = max_or(results,'a',11)
     o_v = max_or(results,'latestVersion',7)
@@ -24,15 +27,44 @@ def parse_results(results,totalResultsCount):
 def no_results():
     print "no artifacts found"
 
-def search(args):
-    parameters = urllib.urlencode({'rows': 10, 'wt': 'json', 'q': args})
+def search(query,maxResults,format_name):
+    parameters = urllib.urlencode({'rows': maxResults, 'wt': 'json', 'q': query})
     url = 'https://search.maven.org/solrsearch/select?%s' % parameters
     try:
         data = json.load(urllib2.urlopen(url))
         response = data['response']
         numResults = int(response['numFound'])
-        parse_results(response['docs'],numResults) if numResults > 0 else no_results()
+        format_str = OUTPUT_FORMAT.get(format_name)
+        no_results() if numResults <= 0 else print_results_table(response['docs']) if format_str is None else print_results_formatted(response['docs'], format_str)
     except urllib2.HTTPError as e: print e
 
-if __name__ == "__main__":
-    search(sys.argv[1:])
+# the output format mapping
+OUTPUT_FORMAT = {
+ "mvn": '<dependency>\n'\
+              '  <groupId>%s</groupId>\n'\
+              '  <artifactId>%s/artifactId>\n'\
+              '  <version>%s</version>\n'\
+              '</dependency>',
+ "buildr": '\'%s:%s:%s\'',
+ "ivy": '<dependency org="%s" name="%s" rev="%s" />',
+ "grape": '@Grapes('\
+                '@Grab(group=\'%s\',module=\'%s\',version=\'%s\')'\
+                ')',
+ "gradle": 'compile \'%s:%s:%s\'',
+ "sbt": 'libraryDependencies += "%s" %% "%s" %% "%s"',
+ "leiningen": '[%s/%s "%s"]'
+}
+
+# arg parser
+parser = argparse.ArgumentParser(description='mvn-search (c) David Silva 2015')
+parser.add_argument('query', metavar='query', default=None, help='the search criteria')
+parser.add_argument('-r', '--max-results', metavar="max_results", default=10,
+                    help='specifies that maximum number of results to return. The default value is 10.')
+parser.add_argument('-f', '--format', metavar='format', default='table',
+                    choices=['table','mvn','buildr','ivy','grape','gradle','sbt','leiningen'],
+                    help='specifies the output format. Either a simple table or build system specific, such as maven or gradle. The default value is table.')
+parser.add_argument('-v', '--version', action='version', version='mvn-search v0.1')
+args = parser.parse_args()
+
+# execute the search
+search(args.query, args.max_results, args.format)
