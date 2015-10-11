@@ -6,9 +6,13 @@ CLI script for searching artifacts at maven central
 - update your PATH variable to include the executable.
 
 ## Usage
-```mvn-search <query>```
+```
+mvn-search [-h] [-r max_results] [-f format] [-v] query
+```
+The supported formats are: 'table', 'mvn', 'buildr', 'ivy', 'grape', 'gradle', 'sbt', 'leiningen'. 'table' is the default output.
 
-The I/O to perform a search for vertx would be something like this:
+## Examples
+Search for vertx artifacts:
 ```
 → mvn-search vertx
 ┌────────────────────────────────────────────────────────────┐
@@ -25,4 +29,23 @@ The I/O to perform a search for vertx would be something like this:
 │ com.englishtown.vertx │         oss-parent-vertx │   2.1.0 │
 │              io.vertx │              vertx-stack │   3.1.0 │
 └────────────────────────────────────────────────────────────┘
+```
+Search for the first three results for vertx artifacts with mvn specific output:
+```
+→ mvn-search vertx -r 3 -f mvn
+<dependency>
+  <groupId>io.vertx</groupId>
+  <artifactId>vertx-dependencies/artifactId>
+  <version>3.1.0</version>
+</dependency>
+<dependency>
+  <groupId>com.englishtown.vertx</groupId>
+  <artifactId>vertx-httpservlet-parent/artifactId>
+  <version>2.1.0</version>
+</dependency>
+<dependency>
+  <groupId>com.englishtown.vertx</groupId>
+  <artifactId>vertx-cassandra-parent/artifactId>
+  <version>3.1.0</version>
+</dependency>
 ```
