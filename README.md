@@ -11,6 +11,19 @@ mvn-search [-h] [-r max_results] [-f format] [-v] query
 ```
 The supported formats are: 'table', 'mvn', 'buildr', 'ivy', 'grape', 'gradle', 'sbt', 'leiningen'. 'table' is the default output.
 
+The query supports all coordinates, classname and SHA-1 checksum:
+* g:group.identifier
+* a:artifact.identifier
+* v:version.identifier
+* l:classifier
+* p:packaging-type
+* fc:fully.classified.classname
+* c:classname
+* 1:hash
+
+These query parameters can be mixed together. if separated by the AND keyword, all
+parameters must be satisfied. e.g. "g:io.vertx AND a:vertx-core AND v:3.1.0"
+
 ## Examples
 Search for vertx artifacts:
 ```
@@ -30,22 +43,22 @@ Search for vertx artifacts:
 │              io.vertx │              vertx-stack │   3.1.0 │
 └────────────────────────────────────────────────────────────┘
 ```
-Search for the first three results for vertx artifacts with mvn specific output:
+Search for the first three results for artifacts from io.vertx with mvn specific output:
 ```
-→ mvn-search vertx -r 3 -f mvn
+→ mvn-search -f mvn -r 3 g:io.vertx
 <dependency>
   <groupId>io.vertx</groupId>
-  <artifactId>vertx-dependencies/artifactId>
+  <artifactId>vertx-stack-npm/artifactId>
   <version>3.1.0</version>
 </dependency>
 <dependency>
-  <groupId>com.englishtown.vertx</groupId>
-  <artifactId>vertx-httpservlet-parent/artifactId>
-  <version>2.1.0</version>
+  <groupId>io.vertx</groupId>
+  <artifactId>vertx-stack-docs/artifactId>
+  <version>3.1.0</version>
 </dependency>
 <dependency>
-  <groupId>com.englishtown.vertx</groupId>
-  <artifactId>vertx-cassandra-parent/artifactId>
+  <groupId>io.vertx</groupId>
+  <artifactId>vertx-stack-docker/artifactId>
   <version>3.1.0</version>
 </dependency>
 ```
