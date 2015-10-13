@@ -11,7 +11,7 @@ mvn-search [-h] [-r max_results] [-f format] [-v] query
 ```
 The supported formats are: 'table', 'mvn', 'buildr', 'ivy', 'grape', 'gradle', 'sbt', 'leiningen'. 'table' is the default output.
 
-The query supports all coordinates, classname and SHA-1 checksum:
+The query supports all coordinates, classname and SHA-1 checksum parameters:
 * g:group.identifier
 * a:artifact.identifier
 * v:version.identifier
@@ -43,7 +43,7 @@ Search for vertx artifacts:
 │              io.vertx │              vertx-stack │   3.1.0 │
 └────────────────────────────────────────────────────────────┘
 ```
-Search for the first three results for artifacts from io.vertx with mvn specific output:
+Search for the first three results of artifacts from io.vertx with mvn specific output:
 ```
 → mvn-search -f mvn -r 3 g:io.vertx
 <dependency>
