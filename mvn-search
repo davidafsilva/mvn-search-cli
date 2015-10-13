@@ -8,20 +8,20 @@ import sys
 import argparse
 
 def max_or(results,field,default):
-    m = max(len(r[field]) for r in results)
+    m = max(len(r.get(field[0], r.get(field[1]))) for r in results)
     return m if m > default else default
 
 def print_results_formatted(results,o_format):
-    for r in results: print o_format % (r['g'],r['a'],r['latestVersion'])
+    for r in results: print o_format % (r['g'],r['a'],r.get('latestVersion', r.get('v')))
 
 def print_results_table(results):
-    o_g = max_or(results,'g',8)
-    o_a = max_or(results,'a',11)
-    o_v = max_or(results,'latestVersion',7)
+    o_g = max_or(results,('g',None),8)
+    o_a = max_or(results,('a',None),11)
+    o_v = max_or(results,('latestVersion','v'),7)
     print '┌'+'─'*(o_g+o_a+o_v+8)+'┐'
     print '│','group id'.center(o_g,' '),'│','artifact id'.center(o_a,' '),'│','version'.center(o_v,' '),'│'
     print '├'+'─'*(o_g+o_a+o_v+8)+'┤'
-    for r in results: print '│',r['g'].rjust(o_g,' '),'│',r['a'].rjust(o_a, ' '),'│',r['latestVersion'].rjust(o_v, ' '),'│'
+    for r in results: print '│',r['g'].rjust(o_g,' '),'│',r['a'].rjust(o_a, ' '),'│',r.get('latestVersion', r.get('v')).rjust(o_v, ' '),'│'
     print '└'+'─'*(o_g+o_a+o_v+8)+'┘'
 
 def no_results():
