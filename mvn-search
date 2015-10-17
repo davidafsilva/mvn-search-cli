@@ -42,7 +42,7 @@ def search(query,maxResults,format_name):
 OUTPUT_FORMAT = {
  "mvn": '<dependency>\n'\
               '  <groupId>%s</groupId>\n'\
-              '  <artifactId>%s/artifactId>\n'\
+              '  <artifactId>%s</artifactId>\n'\
               '  <version>%s</version>\n'\
               '</dependency>',
  "buildr": '\'%s:%s:%s\'',
